@@ -17,7 +17,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->arrayNode('opener')
                     ->children()
-                        ->scalarNode('secret')->end()
+                        ->scalarNode('secret')->defaultValue('ThisIsNotSoSecret')->end()
                     ->end()
                 ->end()
             ->end()
