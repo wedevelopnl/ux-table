@@ -1,0 +1,17 @@
+{
+    "name": "wedevelop/ux-table",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "WeDevelop\\UXTable\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Rick Kuipers",
+            "email": "rick@wedevelop.nl"
+        }
+    ],
+    "require": {}
+}

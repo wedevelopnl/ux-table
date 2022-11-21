@@ -1,0 +1,24 @@
+{
+  "name": "@wedevelopnl/ux-table",
+  "description": "",
+  "license": "MIT",
+  "version": "0.1.0",
+  "symfony": {
+    "controllers": {
+      "ux-table": {
+        "main": "src/controller.js",
+        "webpackMode": "eager",
+        "fetch": "eager",
+        "enabled": true
+      }
+    }
+  },
+  "peerDependencies": {
+    "@hotwired/stimulus": "^3.0.0",
+    "stimulus-use": "^0.50.0"
+  },
+  "devDependencies": {
+    "@hotwired/stimulus": "^3.0.0",
+    "stimulus-use": "^0.50.0"
+  }
+}
