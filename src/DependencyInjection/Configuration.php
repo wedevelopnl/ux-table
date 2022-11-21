@@ -16,6 +16,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder->getRootNode()
             ->children()
                 ->arrayNode('opener')
+                ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('secret')->defaultValue('ThisIsNotSoSecret')->end()
                     ->end()
