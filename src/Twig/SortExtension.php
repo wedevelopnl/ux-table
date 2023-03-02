@@ -12,8 +12,8 @@ use Twig\TwigFunction;
 class SortExtension extends AbstractExtension
 {
     public function __construct(
-        private RequestStack $requestStack,
-        private UrlGeneratorInterface $urlGenerator,
+        private readonly RequestStack $requestStack,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -43,7 +43,10 @@ class SortExtension extends AbstractExtension
 
         $queryParams['sort'][$field] = $direction;
 
-        return $this->urlGenerator->generate($request->attributes->get('_route'), $queryParams);
+        return $this->urlGenerator->generate(
+            $request->attributes->get('_route'),
+            $request->attributes->get('_route_params') + $queryParams
+        );
     }
 
     public function sortState(string $field): string
