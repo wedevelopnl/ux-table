@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace WeDevelop\UXTable\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -23,12 +26,21 @@ abstract class UXTableFormType extends AbstractType
         $request = $this->requestStack->getCurrentRequest();
         $queryParams = $request->query->all();
 
-        $builder->setMethod('GET');
-        $builder->add('search', SearchType::class, ['required' => false, 'attr' => ['data-action' => 'input->wedevelopnl--ux-table--ux-table#search', 'data-turbo-permanent' => null]]);
-
-        unset($queryParams['search']);
-
         $this->buildSubForm($builder, $options, $queryParams, null);
+
+        $builder
+            ->setMethod('GET')
+            ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+                $data = $event->getData();
+                $filter = array_filter($data['filter'] ?? [], fn($v) => $v !== null);
+                $data['filter'] = $filter;
+                $event->setData($data);
+            });
+    }
+
+    public function createFilterForm(FormBuilderInterface $builder, array $options = ['label' => false])
+    {
+        return $builder->create('filter', FormType::class, $options);
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -44,6 +56,34 @@ abstract class UXTableFormType extends AbstractType
         return '';
     }
 
+    protected function addSearch(FormBuilderInterface $builder): self
+    {
+        $builder->add(
+            'search',
+            SearchType::class,
+            ['required' => false, 'attr' => ['data-action' => $this->stimulusSearch(), 'data-turbo-permanent' => null]]
+        );
+
+        return $this;
+    }
+
+    protected function addPageSize(FormBuilderInterface $builder): self
+    {
+        $builder->add('pageSize', ChoiceType::class, [
+            'required' => false,
+            'attr' => ['data-action' => $this->stimulusSearch('change')],
+            'placeholder' => false,
+            'choices' => [
+                10 => 10,
+                20 => 20,
+                50 => 50,
+                100 => 100,
+            ]
+        ]);
+
+        return $this;
+    }
+
     private function buildSubForm(FormBuilderInterface $builder, array $options, array $params, ?string $parentKey)
     {
         foreach ($params as $key => $value) {
@@ -52,8 +92,16 @@ abstract class UXTableFormType extends AbstractType
                 continue;
             }
 
+            if ($builder->has($key)) {
+                continue;
+            }
+
             if (is_array($value)) {
-                $nestedBuilder = $builder->create($key, FormType::class, ['label' => false, 'csrf_protection' => false]);
+                $nestedBuilder = $builder->create(
+                    $key,
+                    FormType::class,
+                    ['label' => false, 'csrf_protection' => false]
+                );
                 $this->buildSubForm($nestedBuilder, $options, $value, $key);
                 $builder->add($nestedBuilder);
                 continue;
@@ -65,5 +113,10 @@ abstract class UXTableFormType extends AbstractType
 
             $builder->add($key, HiddenType::class, ['data' => urldecode($value)]);
         }
+    }
+
+    protected function stimulusSearch(?string $event = 'input'): string
+    {
+        return $event . '->wedevelopnl--ux-table--ux-table#search';
     }
 }

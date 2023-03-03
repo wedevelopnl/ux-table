@@ -30,11 +30,14 @@ class SortExtension extends AbstractExtension
         ];
     }
 
-    public function sortLink(string $field): string
+    public function sortLink(string $field,  string $defaultDirection = 'asc', bool $multiSort = true): string
     {
         $request = $this->requestStack->getCurrentRequest();
         $queryParams = $request->query->all();
-        $direction = 'asc';
+        if ($multiSort) {
+            $queryParams['sort'] = [];
+        }
+        $direction = $defaultDirection;
         if (($queryParams['sort'][$field] ?? null) === 'desc') {
             $direction = null;
         } elseif (($queryParams['sort'][$field] ?? null) === 'asc') {
