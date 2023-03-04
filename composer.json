@@ -1,7 +1,8 @@
 {
     "name": "wedevelopnl/ux-table",
-    "type": "library",
+    "type": "symfony-bundle",
     "license": "MIT",
+    "keywords": ["symfony-ux"],
     "autoload": {
         "psr-4": {
             "WeDevelop\\UXTable\\": "src/"
@@ -13,5 +14,8 @@
             "email": "rick@wedevelop.nl"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=8.1",
+        "symfony/webpack-encore-bundle": "^1.11"
+    }
 }

@@ -13,8 +13,8 @@ use Twig\TwigFunction;
 class OpenerExtension extends AbstractExtension
 {
     public function __construct(
-        private RequestStack $requestStack,
-        private OpenerSigner $openerSigner
+        private readonly RequestStack $requestStack,
+        private readonly OpenerSigner $openerSigner
     ) {
     }
 
