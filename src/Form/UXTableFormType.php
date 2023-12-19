@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace WeDevelop\UXTable\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
@@ -45,6 +44,8 @@ abstract class UXTableFormType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
+        PageSizeBuilder::addFormOptions($resolver);
+
         $resolver->setDefaults([
             'csrf_protection' => false,
             'sort_whitelist' => [],
@@ -69,16 +70,9 @@ abstract class UXTableFormType extends AbstractType
 
     protected function addPageSize(FormBuilderInterface $builder): self
     {
-        $builder->add('pageSize', ChoiceType::class, [
-            'required' => false,
+        $pageSizeBuilder = new PageSizeBuilder($builder);
+        $pageSizeBuilder->build($builder, [
             'attr' => ['data-action' => $this->stimulusSearch('change')],
-            'placeholder' => false,
-            'choices' => [
-                10 => 10,
-                20 => 20,
-                50 => 50,
-                100 => 100,
-            ]
         ]);
 
         return $this;
