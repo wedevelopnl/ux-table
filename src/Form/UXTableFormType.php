@@ -113,4 +113,12 @@ abstract class UXTableFormType extends AbstractType
     {
         return $event . '->wedevelopnl--ux-table--ux-table#search';
     }
+
+    protected function stimulusSearchAttributes(?string $event = 'input'): array
+    {
+        return [
+            'data-action' => $this->stimulusSearch($event),
+            'data-turbo-permanent' => 'true',
+        ];
+    }
 }

@@ -1,7 +1,12 @@
 <div{{ attributes }}>
     <section {{ stimulus_controller('wedevelopnl/ux-table/ux-table') }}>
-        <turbo-frame id="{{ this.id }}" data-turbo-action="advance">
-            {% block content %}{% endblock %}
+        <turbo-frame id="ux-table-{{ this.table.name }}" data-turbo-action="advance">
+            {{ form_start(table.formView) }}
+                {% block content %}{% endblock %}
+                {% for field in this.preservationForm %}
+                    {{ form_widget(field) }}
+                {% endfor %}
+            {{ form_end(table.formView) }}
         </turbo-frame>
     </section>
 </div>

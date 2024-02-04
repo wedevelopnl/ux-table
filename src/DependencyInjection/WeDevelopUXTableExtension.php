@@ -6,6 +6,8 @@ namespace WeDevelop\UXTable\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
+use WeDevelop\UXTable\DataProvider\DataProviderInterface;
+use WeDevelop\UXTable\DataProvider\DoctrineORMProvider;
 use WeDevelop\UXTable\Security\OpenerSigner;
 use WeDevelop\UXTable\Twig\Component\SortLink;
 use WeDevelop\UXTable\Twig\Component\Table;
@@ -41,6 +43,14 @@ final class WeDevelopUXTableExtension extends Extension
         ;
 
         $container->register(SortLink::class, SortLink::class)
+            ->setAutowired(true)
+            ->setAutoconfigured(true)
+        ;
+
+        $container->registerForAutoconfiguration(DataProviderInterface::class)
+            ->addTag(DataProviderInterface::class);
+
+        $container->register(DoctrineORMProvider::class)
             ->setAutowired(true)
             ->setAutoconfigured(true)
         ;

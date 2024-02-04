@@ -24,10 +24,6 @@ final class PageSizeBuilder
 
     public static function getCalculatedPageSize(FormInterface $form, string $fieldName = self::DEFAULT_FIELD_NAME): int
     {
-        if (!is_a($form->getConfig()->getType()->getInnerType(), UXTableFormType::class, false)) {
-            throw new \RuntimeException(sprintf('Form type must extend from "%s" to calculate page size.', self::class));
-        }
-
         $choiceField = $form->get($fieldName);
         if (!is_a($choiceField->getConfig()->getType()->getInnerType(), ChoiceType::class, false)) {
             throw new \RuntimeException(sprintf('Form field "%s" must be of type "%s" to calculate page size.', $fieldName, ChoiceType::class));

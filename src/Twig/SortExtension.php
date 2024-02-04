@@ -32,10 +32,10 @@ class SortExtension extends AbstractExtension
         ];
     }
 
-    public function sortLink(string $field, string $defaultDirection = 'asc', bool $multiSort = true): string
+    public function sortLink(string $uxTableName, string $field, string $defaultDirection = 'asc', bool $multiSort = true): string
     {
         $request = $this->requestStack->getCurrentRequest();
-        $queryParams = $request->query->all();
+        $queryParams = $request->query->all($uxTableName);
 
         $direction = $defaultDirection;
         if (($queryParams['sort'][$field] ?? null) === 'desc') {
@@ -52,14 +52,14 @@ class SortExtension extends AbstractExtension
 
         return $this->urlGenerator->generate(
             $request->attributes->get('_route'),
-            $request->attributes->get('_route_params') + $queryParams
+            $request->attributes->get('_route_params') + [$uxTableName => $queryParams] + $request->query->all()
         );
     }
 
-    public function sortState(string $field): string
+    public function sortState(string $uxTableName, string $field): string
     {
         $request = $this->requestStack->getCurrentRequest();
-        $queryParams = $request->query->all();
+        $queryParams = $request->query->all($uxTableName);
 
         return $queryParams['sort'][$field] ?? 'none';
     }

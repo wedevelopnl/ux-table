@@ -1,6 +1,6 @@
 <div{{ attributes }}>
-    <a href="{{ ux_table_sort_link(this.field, 'asc', false) }}">
+    <a href="{{ ux_table_sort_link(this.table.name, this.field, 'asc', false) }}">
         <div>{{ this.title }}</div>
-        <div><i class="sort sort-{{ ux_table_sort_state(this.field) }}"></i></div>
+        <div><i class="sort sort-{{ ux_table_sort_state(this.table.name, this.field) }}"></i></div>
     </a>
 </div>
