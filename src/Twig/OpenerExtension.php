@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace WeDevelop\UXTable\Twig;
 
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 use WeDevelop\UXTable\Security\Opener;
 use WeDevelop\UXTable\Security\OpenerSigner;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
+#[AsTaggedItem('twig.extension')]
 class OpenerExtension extends AbstractExtension
 {
     public function __construct(

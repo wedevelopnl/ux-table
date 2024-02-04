@@ -5,20 +5,17 @@ declare(strict_types=1);
 namespace WeDevelop\UXTable\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use WeDevelop\UXTable\Security\OpenerSigner;
+use WeDevelop\UXTable\Twig\Component\SortLink;
+use WeDevelop\UXTable\Twig\Component\Table;
 use WeDevelop\UXTable\Twig\OpenerExtension;
 use WeDevelop\UXTable\Twig\SortExtension;
 
-final class UXTableExtension extends Extension
+final class WeDevelopUXTableExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
-        if (!isset($container->getParameter('kernel.bundles')['UXTableBundle'])) {
-            throw new LogicException('The TwigBundle is not registered in your application. Try running "composer require symfony/twig-bundle".');
-        }
-
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
@@ -28,14 +25,24 @@ final class UXTableExtension extends Extension
             ])
         ;
 
-        $container->register(SortExtension::class, SortExtension::class)
-            ->addTag('twig.extension')
+        $container->register(OpenerExtension::class, OpenerExtension::class)
             ->setAutowired(true)
+            ->setAutoconfigured(true)
         ;
 
-        $container->register(OpenerExtension::class, OpenerExtension::class)
-            ->addTag('twig.extension')
+        $container->register(SortExtension::class, SortExtension::class)
             ->setAutowired(true)
+            ->setAutoconfigured(true)
+        ;
+
+        $container->register(Table::class, Table::class)
+            ->setAutowired(true)
+            ->setAutoconfigured(true)
+        ;
+
+        $container->register(SortLink::class, SortLink::class)
+            ->setAutowired(true)
+            ->setAutoconfigured(true)
         ;
     }
 }

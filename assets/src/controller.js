@@ -13,17 +13,4 @@ export default class extends Controller {
     search(e) {
         e.target.form.requestSubmit();
     }
-
-    saveFocus() {
-        this.activeElement = document.activeElement;
-    }
-
-    restoreFocus() {
-        if (typeof this.activeElement === 'undefined') {
-            return;
-        }
-
-        this.activeElement.focus();
-        this.activeElement = null;
-    }
 }

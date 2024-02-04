@@ -23,25 +23,6 @@ The pros of this method:
 
 Make sure Symfony UX Turbo is installed and setup. We heavily rely on this functionality to make this a nice user experience.
 
-### idiomorph
-
-When typing a search query in one of our filter fields, we want it to trigger a form submission after a short delay.
-However, doing so will cause the DOM to be replaced after the Turbo Frame navigation completes.
-The problem with this is that we will lose focus of the input field, so the user will have to click back into the input field to continue typing.
-
-To resolve this, we can tell Turbo to use a DOM morphing library like [idiomorph](https://github.com/bigskysoftware/idiomorph).
-Install this through npm and add the following javascript to your `assets/bootstrap.js`
-
-```js
-import idiomorph from "idiomorph";
-
-document.addEventListener('turbo:before-frame-render', ({ detail }) => {
-    detail.render = (from, to) => { idiomorph.morph(from, to, { ignoreActive: true }) }
-});
-```
-
-The `ignoreActive` setting will make sure the active element will not be touched, allowing us to keep focus.
-
 ## Install
 
 ```sh
@@ -54,10 +35,10 @@ You should be able to just get started.
 
 ## Without Symfony Flex
 
-1. `npm i -D vendor/wedevelopnl/ux-table/src/Resources/assets`
+1. `npm i -D vendor/wedevelopnl/ux-table/assets`
 2. Add to `bundles.php`
    ```php
-   WeDevelop\UXTable\UXTableBundle::class => ['all' => true],
+   WeDevelop\UXTable\WeDevelopUXTableBundle::class => ['all' => true],
    ```
 3. Add to `assets/controllers.json`
    ```json

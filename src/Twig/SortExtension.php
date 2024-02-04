@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace WeDevelop\UXTable\Twig;
 
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
+#[AsTaggedItem('twig.extension')]
 class SortExtension extends AbstractExtension
 {
     public function __construct(

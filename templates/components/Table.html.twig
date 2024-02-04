@@ -1,0 +1,7 @@
+<div{{ attributes }}>
+    <section {{ stimulus_controller('wedevelopnl/ux-table/ux-table') }}>
+        <turbo-frame id="{{ this.id }}" data-turbo-action="advance">
+            {% block content %}{% endblock %}
+        </turbo-frame>
+    </section>
+</div>
