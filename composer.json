@@ -18,6 +18,7 @@
         "php": ">=8.1",
         "symfony/form": ">5.4",
         "symfony/routing": ">5.4",
+        "symfony/ux-twig-component": ">2",
         "twig/twig": ">2"
     },
     "suggest": {
