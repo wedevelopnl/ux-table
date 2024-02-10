@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WeDevelop\UXTable\DataProvider;
 
 use Knp\Component\Pager\Pagination\PaginationInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface DataProviderInterface
 {
@@ -15,4 +16,6 @@ interface DataProviderInterface
         int $pageSize = 50,
         array $options = []
     ): PaginationInterface;
+
+    public function configureOptions(OptionsResolver $resolver): void;
 }

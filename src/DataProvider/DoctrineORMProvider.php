@@ -8,6 +8,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class DoctrineORMProvider implements DataProviderInterface
 {
@@ -48,5 +49,13 @@ final class DoctrineORMProvider implements DataProviderInterface
             $pageSize,
             [PaginatorInterface::PAGE_OUT_OF_RANGE => PaginatorInterface::PAGE_OUT_OF_RANGE_FIX]
         );
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver
+            ->define('data_class')->allowedTypes('string')->required()
+            ->define('hydrator')->allowedTypes('callable')
+        ;
     }
 }

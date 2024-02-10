@@ -16,7 +16,9 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use WeDevelop\UXTable\DataProvider\DataProviderInterface;
+use WeDevelop\UXTable\DataProvider\DoctrineORMProvider;
 use WeDevelop\UXTable\Form\PageSizeBuilder;
 
 abstract class AbstractTable implements TableInterface
@@ -34,34 +36,34 @@ abstract class AbstractTable implements TableInterface
 
     public function process(Request $request, array $additionalFilters = [], array $options = []): void
     {
-        $this->getForm()->handleRequest($request);
-
         /** @var DataProviderInterface $dataProvider */
         $dataProvider = $this->dataProviders->get($this->getDataProvider());
 
+        $options = $this->resolveOptions($options, $dataProvider);
+
+        // Make sure default values are set even if form isn't submitted
+        if (!$request->query->has($this->getName())) {
+            $request->query->set($this->getName(), null);
+        }
+
+        $this->form = $this->buildForm($options);
+        $this->form->handleRequest($request);
+
         $this->pagination = $dataProvider->search(
             filters: $additionalFilters + $this->getFilters(),
-            sort: $this->getSort($request),
+            sort: $this->getSort($request, $options['sortable_fields']),
             page: $this->getPage($request),
             pageSize: $this->getPageSize(),
-            options: $options + $this->getDefaultOptions(),
+            options: $options,
         );
+
         $this->pagination->setPaginatorOptions([PaginatorInterface::PAGE_PARAMETER_NAME => sprintf('%s[page]', $this->getName())]);
     }
 
     public function getForm(): FormInterface
     {
         if (!isset($this->form)) {
-            $builder = $this->buildBaseForm();
-
-            $this->addPageSize($builder);
-
-            $filterFormBuilder = $builder->create('filter', FormType::class, ['label' => false]);
-
-            $this->buildFilterForm($filterFormBuilder);
-            $builder->add($filterFormBuilder);
-
-            $this->form = $builder->getForm();
+            throw new \LogicException(sprintf('Execute %s::process() before retrieving the form', $this::class));
         }
 
         return $this->form;
@@ -86,14 +88,16 @@ abstract class AbstractTable implements TableInterface
     }
 
     abstract public function getName(): string;
-    abstract protected function buildFilterForm(FormBuilderInterface $builder): void;
-    /** @return class-string<DataProviderInterface> */
-    abstract protected function getDataProvider(): string;
-    abstract protected function getSortableFields(): array;
 
-    protected function getDefaultOptions(): array
+    abstract protected function buildFilterForm(FormBuilderInterface $builder, array $options): void;
+
+    protected function getDataProvider(): string
     {
-        return [];
+        return DoctrineORMProvider::class;
+    }
+
+    protected function configureOptions(OptionsResolver $resolver): void
+    {
     }
 
     protected function stimulusSearch(?string $event = 'input'): string
@@ -107,6 +111,20 @@ abstract class AbstractTable implements TableInterface
             'data-action' => $this->stimulusSearch($event),
             'data-turbo-permanent' => 'true',
         ];
+    }
+
+    private function buildForm(array $options): FormInterface
+    {
+        $builder = $this->buildBaseForm();
+
+        $this->addPageSize($builder);
+
+        $filterFormBuilder = $builder->create('filter', FormType::class, ['label' => false]);
+
+        $this->buildFilterForm($filterFormBuilder, $options);
+        $builder->add($filterFormBuilder);
+
+        return $builder->getForm();
     }
 
     private function buildBaseForm(): FormBuilderInterface
@@ -138,11 +156,11 @@ abstract class AbstractTable implements TableInterface
         return $this->getForm()->getData()['filter'] ?? [];
     }
 
-    private function getSort(Request $request): array
+    private function getSort(Request $request, array $sortableFields): array
     {
         $sort = $request->query->all($this->getName())['sort'] ?? [];
 
-        return array_filter($sort, fn($key) => in_array($key, $this->getSortableFields()), ARRAY_FILTER_USE_KEY);
+        return array_filter($sort, fn($key) => in_array($key, $sortableFields), ARRAY_FILTER_USE_KEY);
     }
 
     private function getPage(Request $request): int
@@ -153,5 +171,19 @@ abstract class AbstractTable implements TableInterface
     private function getPageSize(): int
     {
         return PageSizeBuilder::getCalculatedPageSize($this->getForm());
+    }
+
+    private function resolveOptions(array $options, DataProviderInterface $dataProvider): array
+    {
+        $resolver = new OptionsResolver();
+        $resolver
+            ->define('sortable_fields')->allowedTypes('array')->default([])->required()
+        ;
+
+        $dataProvider->configureOptions($resolver);
+
+        $this->configureOptions($resolver);
+
+        return $resolver->resolve($options);
     }
 }

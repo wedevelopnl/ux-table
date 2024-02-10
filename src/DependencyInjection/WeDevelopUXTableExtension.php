@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use WeDevelop\UXTable\DataProvider\DataProviderInterface;
 use WeDevelop\UXTable\DataProvider\DoctrineORMProvider;
 use WeDevelop\UXTable\Security\OpenerSigner;
+use WeDevelop\UXTable\Twig\Component\Filter;
 use WeDevelop\UXTable\Twig\Component\SortLink;
 use WeDevelop\UXTable\Twig\Component\Table;
 use WeDevelop\UXTable\Twig\OpenerExtension;
@@ -43,6 +44,11 @@ final class WeDevelopUXTableExtension extends Extension
         ;
 
         $container->register(SortLink::class, SortLink::class)
+            ->setAutowired(true)
+            ->setAutoconfigured(true)
+        ;
+
+        $container->register(Filter::class, Filter::class)
             ->setAutowired(true)
             ->setAutoconfigured(true)
         ;
