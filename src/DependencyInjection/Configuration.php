@@ -15,6 +15,10 @@ class Configuration implements ConfigurationInterface
 
         $treeBuilder->getRootNode()
             ->children()
+                ->booleanNode('use_default_orm_provider')
+                    ->info('Disable this if you do not have Doctrine ORM installed (eg, using Mongo).')
+                    ->defaultTrue()
+                ->end()
                 ->arrayNode('opener')
                 ->addDefaultsIfNotSet()
                     ->children()
