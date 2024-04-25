@@ -64,10 +64,11 @@ final class WeDevelopUXTableExtension extends Extension implements PrependExtens
         $container->registerForAutoconfiguration(DataProviderInterface::class)
             ->addTag(DataProviderInterface::class);
 
-        $container->register(DoctrineORMProvider::class)
-            ->setAutowired(true)
-            ->setAutoconfigured(true)
-        ;
+        if ($config['use_default_orm_provider']) {
+            $container->register(DoctrineORMProvider::class)
+                ->setAutowired(true)
+                ->setAutoconfigured(true);
+        }
     }
 
     public function prepend(ContainerBuilder $container)
