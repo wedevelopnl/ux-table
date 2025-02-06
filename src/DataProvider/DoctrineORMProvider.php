@@ -32,6 +32,11 @@ final class DoctrineORMProvider implements DataProviderInterface
         $qb->from($class, 'e');
 
         foreach ($filters as $field => $value) {
+            if (is_object($value)) {
+                $qb->andWhere($qb->expr()->eq('e.' . $field, ':' . $field));
+                $qb->setParameter($field, $value);
+                continue;
+            }
             $qb->andWhere($qb->expr()->like('e.' . $field, ':' . $field));
             $qb->setParameter($field, "%$value%");
         }
