@@ -19,7 +19,8 @@
         "symfony/form": ">5.4",
         "symfony/routing": ">5.4",
         "symfony/ux-twig-component": ">2",
-        "twig/twig": ">2"
+        "twig/twig": ">2",
+        "knplabs/knp-paginator-bundle": ">5.4"
     },
     "suggest": {
         "symfony/webpack-encore-bundle": "to use the Stimulus assets included in this bundle",
