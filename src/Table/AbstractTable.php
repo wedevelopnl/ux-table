@@ -113,11 +113,12 @@ abstract class AbstractTable implements TableInterface
         ];
     }
 
+    /** @param array{pageSize?: int, pageSizes?: array<int>} $options */
     private function buildForm(array $options): FormInterface
     {
         $builder = $this->buildBaseForm();
 
-        $this->addPageSize($builder);
+        $this->addPageSize($builder, $options);
 
         $filterFormBuilder = $builder->create('filter', FormType::class, ['label' => false]);
 
@@ -143,9 +144,10 @@ abstract class AbstractTable implements TableInterface
         return $builder;
     }
 
-    private function addPageSize(FormBuilderInterface $builder): void
+    /** @param array{pageSize?: int, pageSizes?: array<int>} $options */
+    private function addPageSize(FormBuilderInterface $builder, array $options): void
     {
-        $pageSizeBuilder = new PageSizeBuilder($builder);
+        $pageSizeBuilder = new PageSizeBuilder($options);
         $pageSizeBuilder->build($builder, [
             'attr' => ['data-action' => $this->stimulusSearch('change')],
         ]);
@@ -181,7 +183,7 @@ abstract class AbstractTable implements TableInterface
         ;
 
         $dataProvider->configureOptions($resolver);
-
+        PageSizeBuilder::addFormOptions($resolver);
         $this->configureOptions($resolver);
 
         return $resolver->resolve($options);
