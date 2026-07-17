@@ -9,7 +9,7 @@ final class OpenerSigner
     {
     }
 
-    public function sign(string $openerUrl)
+    public function sign(string $openerUrl): string
     {
         return hash_hmac('sha256', $openerUrl, $this->secret);
     }
